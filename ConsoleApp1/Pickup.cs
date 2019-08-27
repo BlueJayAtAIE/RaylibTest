@@ -11,9 +11,9 @@ namespace ConsoleApp1
         public Vector2 pos = new Vector2(0, 0);
         public bool enabled = true;
 
-        public Texture2D myTexture; //placeholder
+        public static Texture2D myTexture; //placeholder
 
-        public void SetTexture()
+        public static void SetTexture()
         {
             //myTexture = rl.LoadTexture(file);
         }

@@ -10,6 +10,7 @@ namespace ConsoleApp1
         {
             // Initialization
             //--------------------------------------------------------------------------------------
+
             int screenWidth = 800;
             int screenHeight = 450;
 
@@ -25,30 +26,41 @@ namespace ConsoleApp1
             float i = 10f;
             bool condense = false;
 
-            player.enabled = true;
-
-            System.Array.Clear(pickup, 0, 9);
-            int idx = 0;
-            for (int j = 0; j < 10 && idx < 10; j++)
+            void Init()
             {
-                pickup[idx] = new Pickup();
-                pickup[idx].pos.x = tl.rng.Next(100, 700);
-                pickup[idx].pos.y = tl.rng.Next(50, 400);
-                idx++;
+                timer = 1800;
+                score = 0;
+
+                player.pos.x = 20;
+                player.pos.y = 20;
+                player.enabled = true;
+
+                System.Array.Clear(pickup, 0, 9);
+                int idx = 0;
+                for (int j = 0; j < 10 && idx < 10; j++)
+                {
+                    pickup[idx] = new Pickup();
+                    pickup[idx].pos.x = Tools.rng.Next(100, 700);
+                    pickup[idx].pos.y = Tools.rng.Next(50, 400);
+                    idx++;
+                }
+
+                System.Array.Clear(enemy, 0, 2);
+                idx = 0;
+                for (int j = 0; j < 3 && idx < 3; j++)
+                {
+                    enemy[idx] = new Enemy();
+                    enemy[idx].pos.x = Tools.rng.Next(100, 700);
+                    enemy[idx].pos.y = Tools.rng.Next(50, 400);
+                    idx++;
+                }
             }
 
-            System.Array.Clear(enemy, 0, 2);
-            idx = 0;
-            for (int j = 0; j < 3 && idx < 3; j++)
-            {
-                enemy[idx] = new Enemy();
-                enemy[idx].pos.x = tl.rng.Next(100, 700);
-                enemy[idx].pos.y = tl.rng.Next(50, 400);
-                idx++;
-            }
+            Init();
 
             rl.InitWindow(screenWidth, screenHeight, "Raylib Playground");
             rl.SetTargetFPS(60);
+
             //--------------------------------------------------------------------------------------
 
             // Main game loop
@@ -56,7 +68,14 @@ namespace ConsoleApp1
             {
                 // Update - Where you update variables, run update functions, etc.
                 //----------------------------------------------------------------------------------
-                player.PlayerUpdate();
+
+                if (rl.IsKeyDown(KeyboardKey.KEY_R))
+                {
+                    Init();
+                }
+
+                player.PlayerUpdate();                
+
                 if (timer > 0 && player.enabled && score < scoreToWin)
                 {
                     timer--;
@@ -82,7 +101,7 @@ namespace ConsoleApp1
                 rl.BeginDrawing();
 
                 rl.ClearBackground(Color.BLACK);
-                rl.DrawCircleGradient(400, 225, i, Color.DARKBLUE, Color.BLUE);
+                rl.DrawCircleGradient(400, 225, i, Color.DARKBLUE, Color.BLACK);
 
                 player.PlayerDraw();
 
@@ -97,6 +116,7 @@ namespace ConsoleApp1
 
                 foreach (Enemy e in enemy)
                 {
+                    e.EnemyUpdate();
                     e.EnemyDraw();
                     if (e.enabled)
                     {
@@ -108,29 +128,33 @@ namespace ConsoleApp1
                     }
                 }
 
-                rl.DrawText($"Your score is {score}", 275, 50, 30, Color.WHITE);
-                rl.DrawText($"{timer / 60}", 350, 100, 30, Color.WHITE);
+                rl.DrawRectangleGradientV(320, -5, 155, 80, Color.DARKBLUE, Color.SKYBLUE);
+                rl.DrawText($"Score: {score}", 335, 10, 30, Color.WHITE);
+                rl.DrawText($"Timer: {timer / 60}", 330, 40, 30, Color.WHITE);
+
+                //rl.DrawText()
 
                 if (score >= scoreToWin)
                 {
-                    rl.DrawText($"You Win!", 325, 400, 30, Color.WHITE);
+                    rl.DrawRectangleGradientV(280, 395, 250, 55, Color.SKYBLUE, Color.BLUE);
+                    rl.DrawText($"You Win!", 300, 400, 50, Color.WHITE);
                     player.hasWon = true;
                     player.enabled = false;
                 }
 
-                if (!player.enabled && timer > 0 && score < scoreToWin)
+                if (!player.enabled && timer > 0 && !player.hasWon)
                 {
-                    rl.DrawText($"You Died.", 325, 400, 30, Color.WHITE);
+                    rl.DrawRectangleGradientV(280, 395, 265, 55, Color.RED, Color.MAROON);
+                    rl.DrawText($"You Died.", 300, 400, 50, Color.WHITE);
                 }
 
                 if (timer == 0)
                 {
-                    rl.DrawText($"Times up!", 325, 400, 30, Color.WHITE);
+                    rl.DrawRectangleGradientV(280, 395, 250, 55, Color.RED, Color.MAROON);
+                    rl.DrawText($"Times up!", 300, 400, 50, Color.WHITE);
                     player.enabled = false;
                 }
-
                 
-
                 rl.EndDrawing();
                 //End Drawing ----------------------------------------------------------------------
             }

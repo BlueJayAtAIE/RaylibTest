@@ -8,7 +8,7 @@ namespace ConsoleApp1
 {
     public class Player
     {
-        public Vector2 pos = new Vector2(20, 20);
+        public Vector2 pos = new Vector2(0, 0);
         float speed;
         public bool enabled = true;
         public bool hasWon = false;

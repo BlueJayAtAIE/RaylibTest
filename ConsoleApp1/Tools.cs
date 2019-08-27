@@ -8,7 +8,7 @@ namespace ConsoleApp1
 {
     public class Tools
     {
-        public Random rng = new Random();
+        public static Random rng = new Random();
         public bool CheckCollisionPickup(Player _pl, Pickup _pu)
         {
             bool rtn = false;

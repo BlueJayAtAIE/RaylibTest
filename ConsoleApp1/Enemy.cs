@@ -8,8 +8,8 @@ namespace ConsoleApp1
 {
     public class Enemy
     {
-        public Vector2 pos = new Vector2(20, 20);
-        float speed = 1f;
+        public Vector2 pos = new Vector2(0, 0);
+        float speed = 5f;
         public bool enabled = true;
         public Color[] coreColor = new Color[4] { Color.RED, Color.MAROON, Color.GRAY, Color.DARKGRAY };
 
@@ -20,7 +20,27 @@ namespace ConsoleApp1
                 return;
             }
 
-            //do movement stuff
+            //Basic Movement
+            //pos.x += Tools.rng.Next(15); //temp
+            //pos.y -= Tools.rng.Next(20);
+
+            //Checking for screen wrap
+            if (pos.x > 800)
+            {
+                pos.x = -30;
+            }
+            if (pos.x < -30)
+            {
+                pos.x = 800;
+            }
+            if (pos.y > 450)
+            {
+                pos.y = -30;
+            }
+            if (pos.y < -30)
+            {
+                pos.y = 450;
+            }
         }
 
         public Color CurrentInnerColor()
