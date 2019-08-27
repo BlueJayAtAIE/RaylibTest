@@ -11,6 +11,14 @@ namespace ConsoleApp1
             // Initialization
             //--------------------------------------------------------------------------------------
 
+            void Restart()
+            {
+                if (rl.IsKeyDown(KeyboardKey.KEY_R))
+                {
+                    Init();
+                }
+            }
+
             int screenWidth = 800;
             int screenHeight = 450;
 
@@ -34,6 +42,7 @@ namespace ConsoleApp1
                 player.pos.x = 20;
                 player.pos.y = 20;
                 player.enabled = true;
+                player.hasWon = false;
 
                 System.Array.Clear(pickup, 0, 9);
                 int idx = 0;
@@ -68,12 +77,7 @@ namespace ConsoleApp1
             {
                 // Update - Where you update variables, run update functions, etc.
                 //----------------------------------------------------------------------------------
-
-                if (rl.IsKeyDown(KeyboardKey.KEY_R))
-                {
-                    Init();
-                }
-
+              
                 player.PlayerUpdate();                
 
                 if (timer > 0 && player.enabled && score < scoreToWin)
@@ -132,27 +136,32 @@ namespace ConsoleApp1
                 rl.DrawText($"Score: {score}", 335, 10, 30, Color.WHITE);
                 rl.DrawText($"Timer: {timer / 60}", 330, 40, 30, Color.WHITE);
 
-                //rl.DrawText()
 
                 if (score >= scoreToWin)
                 {
                     rl.DrawRectangleGradientV(280, 395, 250, 55, Color.SKYBLUE, Color.BLUE);
                     rl.DrawText($"You Win!", 300, 400, 50, Color.WHITE);
+                    rl.DrawText("Press \"r\" to restart.", 195, 180, 40, Color.WHITE);
                     player.hasWon = true;
                     player.enabled = false;
+                    Restart();
                 }
 
                 if (!player.enabled && timer > 0 && !player.hasWon)
                 {
                     rl.DrawRectangleGradientV(280, 395, 265, 55, Color.RED, Color.MAROON);
                     rl.DrawText($"You Died.", 300, 400, 50, Color.WHITE);
+                    rl.DrawText("Press \"r\" to restart.", 195, 180, 40, Color.WHITE);
+                    Restart();
                 }
 
                 if (timer == 0)
                 {
                     rl.DrawRectangleGradientV(280, 395, 250, 55, Color.RED, Color.MAROON);
                     rl.DrawText($"Times up!", 300, 400, 50, Color.WHITE);
+                    rl.DrawText("Press \"r\" to restart.", 195, 180, 40, Color.WHITE);
                     player.enabled = false;
+                    Restart();
                 }
                 
                 rl.EndDrawing();
