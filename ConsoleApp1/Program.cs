@@ -14,10 +14,20 @@ namespace ConsoleApp1
             int screenHeight = 450;
 
             Tools tl = new Tools();
-
-            Player pl = new Player();
-
+            Player player = new Player();
             Pickup[] pickup = new Pickup[10];
+            Enemy[] enemy = new Enemy[3];
+
+            int timer = 1800;
+            int scoreToWin = 10;
+            int score = 0;
+
+            float i = 10f;
+            bool condense = false;
+
+            player.enabled = true;
+
+            System.Array.Clear(pickup, 0, 9);
             int idx = 0;
             for (int j = 0; j < 10 && idx < 10; j++)
             {
@@ -27,13 +37,17 @@ namespace ConsoleApp1
                 idx++;
             }
 
+            System.Array.Clear(enemy, 0, 2);
+            idx = 0;
+            for (int j = 0; j < 3 && idx < 3; j++)
+            {
+                enemy[idx] = new Enemy();
+                enemy[idx].pos.x = tl.rng.Next(100, 700);
+                enemy[idx].pos.y = tl.rng.Next(50, 400);
+                idx++;
+            }
+
             rl.InitWindow(screenWidth, screenHeight, "Raylib Playground");
-
-            float i = 10f;
-            bool condense = false;
-
-            int score = 0;
-
             rl.SetTargetFPS(60);
             //--------------------------------------------------------------------------------------
 
@@ -42,7 +56,11 @@ namespace ConsoleApp1
             {
                 // Update - Where you update variables, run update functions, etc.
                 //----------------------------------------------------------------------------------
-                pl.PlayerUpdate();
+                player.PlayerUpdate();
+                if (timer > 0 && player.enabled && score < scoreToWin)
+                {
+                    timer--;
+                }
 
                 if (condense == true)
                 {
@@ -56,7 +74,6 @@ namespace ConsoleApp1
                     if (i > 250)
                         condense = true;
                 }
-                //Color test = rl.ColorFromHSV(new Vector3(i, 255, 200)); // N O
 
                 //End Update -----------------------------------------------------------------------
 
@@ -66,20 +83,53 @@ namespace ConsoleApp1
 
                 rl.ClearBackground(Color.BLACK);
                 rl.DrawCircleGradient(400, 225, i, Color.DARKBLUE, Color.BLUE);
+
+                player.PlayerDraw();
+
                 foreach (Pickup p in pickup)
                 {
-                    if (p.Enabled)
+                    if (p.enabled)
                     {
                         p.PickupDraw();
-                        score += tl.CheckCollision(pl, p) ? 1 : 0;
+                        score += tl.CheckCollisionPickup(player, p) ? 1 : 0;
                     }
                 }
-                pl.PlayerDraw();
+
+                foreach (Enemy e in enemy)
+                {
+                    e.EnemyDraw();
+                    if (e.enabled)
+                    {
+                        tl.CheckCollisionEnemy(player, e);
+                    }
+                    if (score >= scoreToWin)
+                    {
+                        e.enabled = false;
+                    }
+                }
+
                 rl.DrawText($"Your score is {score}", 275, 50, 30, Color.WHITE);
-                if (score >= 10)
+                rl.DrawText($"{timer / 60}", 350, 100, 30, Color.WHITE);
+
+                if (score >= scoreToWin)
                 {
                     rl.DrawText($"You Win!", 325, 400, 30, Color.WHITE);
+                    player.hasWon = true;
+                    player.enabled = false;
                 }
+
+                if (!player.enabled && timer > 0 && score < scoreToWin)
+                {
+                    rl.DrawText($"You Died.", 325, 400, 30, Color.WHITE);
+                }
+
+                if (timer == 0)
+                {
+                    rl.DrawText($"Times up!", 325, 400, 30, Color.WHITE);
+                    player.enabled = false;
+                }
+
+                
 
                 rl.EndDrawing();
                 //End Drawing ----------------------------------------------------------------------
