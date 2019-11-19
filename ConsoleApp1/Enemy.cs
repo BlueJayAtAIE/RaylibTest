@@ -21,8 +21,8 @@ namespace ConsoleApp1
             }
 
             //Basic Movement
-            //pos.x += Tools.rng.Next(15); //temp
-            //pos.y -= Tools.rng.Next(20);
+            pos.x += Tools.rng.Next(6); //temp
+            pos.y -= Tools.rng.Next(20);
 
             //Checking for screen wrap
             if (pos.x > 800)
